@@ -30,7 +30,7 @@ public class GameMain extends JPanel {
 	private GameState currentState;
 	private JLabel statusBar;
 	private int currentPlayer;
-	
+
 	public GameMain() {
 		
 		// MouseEvent manager
@@ -85,7 +85,7 @@ public class GameMain extends JPanel {
 	}
 	
 	public void updateState( int row, int col ) {
-		currentState = board.getWinner();
+		currentState = GameState.values()[board.getWinner()];
 	}
 	
 	@Override
@@ -104,7 +104,8 @@ public class GameMain extends JPanel {
 			case PLAYER1_WIN:
 				statusBar.setForeground( Color.RED );
 				statusBar.setText( "Player 1 wins! Click to play again.." );
-			
+				break;
+				
 			case PLAYER2_WIN:
 				statusBar.setForeground( Color.RED );
 				statusBar.setText( "Player 2 wins! Click to play again.." );

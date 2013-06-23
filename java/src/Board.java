@@ -1,6 +1,16 @@
 import java.awt.*;
 
 public class Board {
+	public final static int X = 0;
+	public final static int Y = 1;
+	
+	public final static int VERTICAL = 0;
+	public final static int HORIZONTAL = 1;
+	public final static int DIAGONAL_R = 2;
+	public final static int DIAGONAL_L = 3;
+	
+	public final static int[] SIZE = { GameMain.COLS, GameMain.ROWS };
+	
 	int[][] cells;
 	
 	public Board() {
@@ -29,9 +39,76 @@ public class Board {
 		return false;
 	}
 	
-	public GameState getWinner() {
-		// FILL ME PROPERLY
-		return GameState.PLAYING;
+	public int getWinner() {
+		int[][] dmap = {{0,1},{1,0},{1,1},{-1,1}};
+		String[] dnames = {"VERTICAL", "HORIZONTAL", "DIAGONAL_R", "DIAGONAL_L"};
+		
+		for( int direction = 0; direction < 4; direction++ ) {
+			//System.err.println( dnames[direction] );
+			int size = direction < 1 ? GameMain.COLS : GameMain.ROWS;
+			for( int i = 0; i < size; i++ ) {
+				int[] midPoint = getMidPoint( direction, i );
+				int toCheck = cells[midPoint[Y]][midPoint[X]];
+				//System.err.println( "MP: [" + midPoint[X] + "," + midPoint[Y] + "], V: " + toCheck );
+				
+				if( toCheck > 0 ) {
+					int[] pos = getStart( midPoint, direction );
+					int count = 0;
+					
+					while( isLegal( pos ) == true ) {
+						if( cells[pos[Y]][pos[X]] == toCheck ) count++;
+						else count = 0;
+						
+						//System.err.println( "       (" + pos[X] + "," + pos[Y] + "):  v[" + cells[pos[Y]][pos[X]] + "]   c[" + count + "]");
+						
+						if( count == 4 ) return toCheck;
+						pos[X] += dmap[direction][X];
+						pos[Y] += dmap[direction][Y];
+					}
+				}
+			}
+		}
+		
+		return 0;
+	}
+	
+	public boolean isLegal( int[] pos ) {
+		for( int i = 0; i < pos.length; i++ ) {
+			if( pos[i] < 0 || pos[i] >= SIZE[i] ) return false;
+		}
+		
+		return true;
+	}
+	
+	public int[] getStart( int[] pos, int dir ) {
+		int[] start = new int[2];
+		int ceil;
+		
+		if( dir == VERTICAL || dir == HORIZONTAL ) {
+			ceil = 1-dir;
+			start[1-ceil] = pos[1-ceil];
+			
+		} else if( dir == DIAGONAL_R ) {
+			ceil = SIZE[X] - pos[X] < SIZE[Y] - SIZE[Y] ? X : Y;
+			start[ceil] = SIZE[ceil] - ( SIZE[ceil] - pos[ceil] + pos[1-ceil] );
+			
+		} else if( dir == DIAGONAL_L ) {
+			ceil = pos[X] < SIZE[Y] - pos[Y] ? X : Y;
+			start[1-ceil] = ceil*( SIZE[X] - 1 );
+			if( ceil == 1 ) start[ceil] = pos[ceil] - ( SIZE[1-ceil] - 1 ) - pos[1-ceil];
+			else start[ceil] = SIZE[ceil] - pos[ceil] + pos[1-ceil] - 1;
+		}
+		
+		return start;
+	}
+	
+	public int[] getMidPoint( int direction, int increment ) {
+		int[] mid = new int[2];
+		int i = direction == VERTICAL ? 0 : 1;
+		
+		mid[i] = increment;
+		mid[1-i] = SIZE[1-i]/2;
+		return mid;
 	}
 	
 	public void paint(Graphics g) {

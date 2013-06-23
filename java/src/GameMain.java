@@ -2,11 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 public class GameMain extends JPanel {
 	public static final String TITLE = "Connect 4";
+	public final static boolean FAILED = false;
 	
-	public final static int FAILED = 0;
 	public final static int EMPTY = 0;
 	public final static int PLAYER1 = 1;
 	public final static int PLAYER2 = 2;
@@ -25,6 +25,7 @@ public class GameMain extends JPanel {
 	public static final int SYMBOL_STROKE_WIDTH = 8;
 	
 	
+	
 	private Board board;
 	private GameState currentState;
 	private JLabel statusBar;
@@ -36,7 +37,7 @@ public class GameMain extends JPanel {
 		this.addMouseListener( new MouseAdapter() {
 			@Override
 			public void mouseClicked( MouseEvent e ) {
-				int res;
+				boolean res;
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 				
@@ -47,7 +48,7 @@ public class GameMain extends JPanel {
 					if( rowSelected >= 0 && rowSelected < ROWS && colSelected >= 0 && colSelected < COLS && board.cells[rowSelected][colSelected] == EMPTY ) {
 						//board.cells[rowSelected][colSelected] = currentPlayer;
 						do {
-							res = board.insert( colSelected );
+							res = board.insert( colSelected, currentPlayer );
 						}
 						while( res == FAILED );
 						

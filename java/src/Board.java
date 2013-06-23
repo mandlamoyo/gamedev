@@ -11,9 +11,22 @@ public class Board {
 		cells = new int[GameMain.ROWS][GameMain.COLS];
 	}
 	
-	public int insert( int col ) {
-		// FILL ME PROPERLY
-		return 0;
+	public boolean insert( int col, int player ) {
+		int i = GameMain.ROWS-1;
+		while( i >= 0 ) {
+			if( cells[i][col] == 0 && i > 0 ) {
+				i--;
+				
+			} else if( i < GameMain.ROWS-1 ) {
+				if( cells[i][col] > 0 ) i++;
+				cells[i][col] = player;
+				return true;
+				
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 	
 	public GameState getWinner() {
@@ -43,7 +56,7 @@ public class Board {
 				if( state != GameMain.EMPTY ) {
 					g2d.setColor( colList[state-1] );
 					int x = col * GameMain.CELL_SIZE + GameMain.CELL_PADDING;
-					int y = row * GameMain.CELL_SIZE + GameMain.CELL_PADDING;
+					int y = ((GameMain.ROWS-1)-row) * GameMain.CELL_SIZE + GameMain.CELL_PADDING;
 					g2d.drawOval( x, y, GameMain.SYMBOL_SIZE, GameMain.SYMBOL_SIZE );
 				}
 			}
